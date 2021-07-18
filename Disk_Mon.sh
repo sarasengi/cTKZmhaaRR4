@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mondisk='Select OS: '
+echo "Select OS: "
 options=("CentOS 6/7" "CentOS 8" "Debian/Ubuntu" "Quit")
 select opt in "${options[@]}"
 do
