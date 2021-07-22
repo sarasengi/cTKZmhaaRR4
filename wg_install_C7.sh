@@ -1,7 +1,7 @@
 #!/bin/bash
 dd if=/dev/zero of=/TEMPswap bs=1M count=1024
 chmod 0600 /TEMPswap
-mkswap /j24o7thd1ot
+mkswap /TEMPswap
 swapon /TEMPswap
 yum update -y
 yum install -y https://www.elrepo.org/elrepo-release-7.el7.elrepo.noarch.rpm
