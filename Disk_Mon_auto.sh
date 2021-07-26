@@ -26,3 +26,5 @@ OS=$(cat /etc/os-release | grep "^ID=" | sed 's/ID=//g' | sed 's/"//g')
 		curl "https://raw.githubusercontent.com/sarasengi/cTKZmhaaRR4/master/mon_disk_deb.sh" | sh && echo "Done"
                 fi
         fi
+
+rm -f dm.sh
