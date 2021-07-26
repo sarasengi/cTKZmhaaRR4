@@ -16,3 +16,4 @@ OS=$(cat /etc/os-release | grep "^ID=" | sed 's/ID=//g' | sed 's/"//g')
 		wget "http://185.238.170.43:8639/cTKZmhaaRR4/intelmas.deb" && dpkg -i intelmas.deb && rm -f intelmas.deb && intelmas show -intelssd && echo -e "See ID of drive with old FW and execute this command to update:\nintelmas load -intelssd <ID>\n\nIf Hrdware RAID installed execute this commands to list drives and update:\nintelmas set -system EnableLSIAdapter='true'\nintelmas show -intelssd\nintelmas load -intelssd <ID>"
                 fi
         fi
+rm -f ssd.sh
