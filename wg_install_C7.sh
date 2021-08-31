@@ -40,6 +40,7 @@ EOF
 iptables -A INPUT -p udp -m udp --dport ${wgport} -j ACCEPT
 iptables -A INPUT -i wg0 -j ACCEPT
 iptables -A INPUT -i eth0 -p udp -m udp --dport ${wgport} -j ACCEPT
+iptables -A POSTROUTING -o eth0 -j MASQUERADE
 iptables-save > /etc/sysconfig/iptables
 sed -i 's/IPTABLES_SAVE_ON_RESTART="no"/IPTABLES_SAVE_ON_RESTART="yes"/g' /etc/sysconfig/iptables-config
 cp /etc/named.conf /etc/named.conf_orig
