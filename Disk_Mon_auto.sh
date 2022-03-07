@@ -17,6 +17,11 @@ OS=$(cat /etc/os-release | grep "^ID=" | sed 's/ID=//g' | sed 's/"//g')
 			yum install curl -y
 			curl "https://raw.githubusercontent.com/sarasengi/cTKZmhaaRR4/master/mon_disk_centos8.sh" | sh && echo "Done"
                         fi
+			if [ "${OSalt}" = "AlmaLinux" ]; then
+			echo "Run for AlmaLinux"
+                        yum install curl -y
+                        curl "https://raw.githubusercontent.com/sarasengi/cTKZmhaaRR4/master/mon_disk_centos8.sh" | sh && echo "Done"
+                        fi
                 fi
         else
 
