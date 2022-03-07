@@ -25,7 +25,6 @@ OS=$(cat /etc/os-release | grep "^ID=" | sed 's/ID=//g' | sed 's/"//g')
 		apt install curl -y
 		curl "https://raw.githubusercontent.com/sarasengi/cTKZmhaaRR4/master/mon_disk_deb.sh" | sh && echo "Done"
                 fi
-        fi
 
 #If OS is AlmaLinux
 			if [ "${OS}" = "almalinux" ]; then
@@ -33,6 +32,6 @@ OS=$(cat /etc/os-release | grep "^ID=" | sed 's/ID=//g' | sed 's/"//g')
                         yum install curl -y
                         curl "https://raw.githubusercontent.com/sarasengi/cTKZmhaaRR4/master/mon_disk_centos8.sh" | sh && echo "Done"
                         fi
-
+	fi
 
 rm -f dm.sh
