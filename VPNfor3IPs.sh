@@ -42,7 +42,7 @@ sed -i 's/50000/50001/g' from_"${IP1}"_to_$IP3-tcp.ovpn from_"${IP1}"_to_$IP3-ud
 rm -f client* all.zip
 zip -r ./all.zip ./*
 
-sed -i '/10.180.5.1;/a10.180.6.1;\n10.180.7.1;\10.180.8.1;\10.180.9.1;' /etc/named.conf
+sed -i '/10.180.5.1;/a10.180.6.1;\n10.180.7.1;\n10.180.8.1;\n10.180.9.1;' /etc/named.conf
 sed -i '/10.180.5.0\/24;/a10.180.6.0\/24;\n10.180.7.0\/24;\n10.180.8.0\/24;\n10.180.9.0\/24;' /etc/named.conf
 systemctl restart named
 
