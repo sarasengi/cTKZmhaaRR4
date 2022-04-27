@@ -8,16 +8,16 @@ echo $IP2 > /root/ips
 echo $IP3 >> /root/ips
 
 cd /etc/openvpn/server/
-for i in `cat /root/ips` ; do cp server-tcp.conf from_$IP1_to_$i-tcp.conf ; cp server-udp.conf from_$IP1_to_$i-udp.conf ; done
+for i in `cat /root/ips` ; do cp server-tcp.conf from_"${IP1}"_to_$i-tcp.conf ; cp server-udp.conf from_"${IP1}"_to_$i-udp.conf ; done
 mv server-tcp.conf server-tcp.conf_orig
 mv server-udp.conf server-udp.conf_orig
 systemctl stop openvpn-server@server-tcp.service openvpn-server@server-udp.service
 systemctl disable openvpn-server@server-tcp.service openvpn-server@server-udp.service
-sed -i 's/10.180.1./10.180.6./g' from_$IP1_to_$IP2-tcp.conf
-sed -i 's/10.180.2./10.180.7./g' from_$IP1_to_$IP2-udp.conf
-sed -i 's/10.180.1./10.180.8./g' from_$IP1_to_$IP3-tcp.conf
-sed -i 's/10.180.2./10.180.9./g' from_$IP1_to_$IP3-udp.conf
-sed -i 's/50000/50001/g' from_$IP1_to_$IP3-tcp.conf from_$IP1_to_$IP3-udp.conf
+sed -i 's/10.180.1./10.180.6./g' from_"${IP1}"_to_$IP2-tcp.conf
+sed -i 's/10.180.2./10.180.7./g' from_"${IP1}"_to_$IP2-udp.conf
+sed -i 's/10.180.1./10.180.8./g' from_"${IP1}"_to_$IP3-tcp.conf
+sed -i 's/10.180.2./10.180.9./g' from_"${IP1}"_to_$IP3-udp.conf
+sed -i 's/50000/50001/g' from_"${IP1}"_to_$IP3-tcp.conf from_"${IP1}"_to_$IP3-udp.conf
 
 sed -i "/10.180.5.0/a-A POSTROUTING -s 10.180.6.0/24 -o eth0 -j SNAT --to-source $IP2" /etc/sysconfig/iptables
 sed -i "/10.180.6.0/a-A POSTROUTING -s 10.180.7.0/24 -o eth0 -j SNAT --to-source $IP2" /etc/sysconfig/iptables
@@ -33,11 +33,11 @@ for i in `ls| sed 's/\.conf//g' | grep -v server` ;  do echo $i ; systemctl enab
 cp -Rp $clcf $clcf"_ORIG"
 
 cd $clcf
-mv client01-tcp.ovpn from_$IP1_to_$IP2-tcp.ovpn
-mv client01-udp.ovpn from_$IP1_to_$IP2-udp.ovpn
-mv client02-tcp.ovpn from_$IP1_to_$IP3-tcp.ovpn
-mv client02-udp.ovpn from_$IP1_to_$IP3-udp.ovpn
-sed -i 's/50000/50001/g' from_$IP1_to_$IP3-tcp.ovpn from_$IP1_to_$IP3-udp.ovpn
+mv client01-tcp.ovpn from_"${IP1}"_to_$IP2-tcp.ovpn
+mv client01-udp.ovpn from_"${IP1}"_to_$IP2-udp.ovpn
+mv client02-tcp.ovpn from_"${IP1}"_to_$IP3-tcp.ovpn
+mv client02-udp.ovpn from_"${IP1}"_to_$IP3-udp.ovpn
+sed -i 's/50000/50001/g' from_"${IP1}"_to_$IP3-tcp.ovpn from_"${IP1}"_to_$IP3-udp.ovpn
 
 rm -f client* all.zip
 zip -r ./all.zip ./*
