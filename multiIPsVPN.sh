@@ -65,4 +65,5 @@ echo "socks5:"
 echo -e "$IP1:50080\n$IP2:50080\n$IP3:50080"
 echo -e "usr_01 / $(grep usr_01 /etc/3proxy.cfg | awk -F\: '{print $3}')\nusr_02 / $(grep usr_02 /etc/3proxy.cfg | awk -F\: '{print $3}')\nusr_03 / $socks_user3_pw"
 
+
 rm -f /root/ips /root/multiIPsVPN.sh
