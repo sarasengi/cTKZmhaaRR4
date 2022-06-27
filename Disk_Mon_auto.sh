@@ -11,7 +11,7 @@ OS=$(cat /etc/os-release | grep "^ID=" | sed 's/ID=//g' | sed 's/"//g')
 		yum install curl -y
 		curl "https://raw.githubusercontent.com/sarasengi/cTKZmhaaRR4/master/mon_disk_centos.sh" | sh && echo "Done"
                 else
-			if [ "${OSver}" >= "8" ]; then
+			if [ "${OSver}" = "8" ]; then
                         echo "Run for CentOS 8"
 			yum install curl -y
 			curl "https://raw.githubusercontent.com/sarasengi/cTKZmhaaRR4/master/mon_disk_centos8.sh" | sh && echo "Done"
