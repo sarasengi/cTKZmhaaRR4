@@ -35,4 +35,13 @@ OS=$(cat /etc/os-release | grep "^ID=" | sed 's/ID=//g' | sed 's/"//g')
                         fi
 	fi
 
+#If OS is Sangoma
+                        if [ "${OS}" = "sangoma" ]; then
+                        echo "Run for Sangoma Linux"
+                        yum install curl -y
+                        curl "https://raw.githubusercontent.com/sarasengi/cTKZmhaaRR4/master/mon_disk_centos.sh" | sh && echo "Done"
+                        fi
+        fi
+
+
 rm -f dm.sh
