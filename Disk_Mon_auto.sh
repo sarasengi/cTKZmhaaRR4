@@ -21,12 +21,20 @@ OS=$(cat /etc/os-release | grep "^ID=" | sed 's/ID=//g' | sed 's/"//g')
 
 #If OS is Debian based then run command
                 if [ "${OS}" = "debian" ] || [ "${OS}" = "ubuntu" ]; then
-		echo "Run for Debian/Ubuntu"
-		apt update
-		apt install curl -y
-		curl "https://raw.githubusercontent.com/sarasengi/cTKZmhaaRR4/master/mon_disk_deb.sh" | sh && echo "Done"
-                fi
-
+		OSver_deb=$(cat /etc/lsb-release | grep 'DISTRIB_RELEASE' | awk -F\= '{print $2}')
+			if [ "${OS}" = "ubuntu" ] & [ "${OSver_deb}" = "22.04" ]; then
+			echo "Run for ${OS} ${OSver_deb}"
+			apt update
+			apt install curl -y
+			curl "https://raw.githubusercontent.com/sarasengi/cTKZmhaaRR4/master/mon_disk_ubuntu22.sh" | sh && echo "Done"
+	               
+		else
+                        echo "Run for ${OS} ${OSver_deb}"
+                        apt update
+                        apt install curl -y
+                        curl "https://raw.githubusercontent.com/sarasengi/cTKZmhaaRR4/master/mon_disk_deb.sh" | sh && echo "Done"
+                        fi
+fi
 #If OS is AlmaLinux
 			if [ "${OS}" = "almalinux" ]; then
                         echo "Run for AlmaLinux"
