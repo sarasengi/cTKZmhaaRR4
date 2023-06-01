@@ -8,4 +8,4 @@ cd /var/www/html/*/ && rm -f all.zip *.png && find . -iname '*.conf' -exec sh -c
 systemctl restart iptables && systemctl restart wg-quick@wg00.service
 sed -i "/external/d" /etc/3proxy.cfg && sed -i "/internal/d" /etc/3proxy.cfg && sed -i "/socks/d" /etc/3proxy.cfg
 echo socks -n -e$ip2 -i$ip1 -p50080 -a >> /etc/3proxy.cfg
-rm -f /root/vpn12.sh
+rm -f /root/vpn_1-to-2.sh
