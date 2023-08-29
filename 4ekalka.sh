@@ -38,8 +38,8 @@ fi
                         echo ""
                         echo "####смотрим входы по ssh и выводим новые"
                         cp ssh_2daysafter ssh
-                        grep -h Accept ${MNTCHK}var/log/{secure,auth.log}* |tee ssh_2daysafter
-                        cat ssh | grep -v -f ssh_2daysafter |tee sshlogbuff
+                        grep -h Accept ${MNTCHK}var/log/{secure,auth.log}* > ssh_2daysafter
+                        cat ssh | grep -v -f ssh_2daysafter > sshlogbuff
                         cat ssh_2daysafter | grep -v -f sshlogbuff > last_ssh_log
                         rm -f sshlogbuff
                         cat ./last_ssh_log
@@ -47,7 +47,7 @@ fi
                         echo ""
                         echo "####смотрим хистори и выводим последние действия"
                         cp history_2daysafter history
-                        cat ${MNTCHK}root/.bash_history |tee history_2daysafter
+                        cat ${MNTCHK}root/.bash_history > history_2daysafter
                         cat history | grep -v -f history_2daysafter > historybuff
                         cat history_2daysafter | grep -v -f historybuff > last_actions
                         rm -f historybuff
@@ -78,11 +78,11 @@ fi
                         echo "чекаем возможные домены (возможно, надо будет ещё вручную проверить)"
                         grep -R -E 'server_name|namevhost' ${MNTCHK}etc/httpd/* ${MNTCHK}etc/nginx/* ${MNTCHK}home/*/conf/web/* 2>/dev/null
                         echo ""
-			echo ""
+                        echo ""
                         echo "Чекаем наличие панели и хостов в директории"
                         echo " ISPmanager 5+"
                         ls -d ${MNTCHK}usr/local/mgr5 2>/dev/null
-			ls -d ${MNTCHK}var/www/*/data/www/*/ 2>/dev/null
+                        ls -d ${MNTCHK}var/www/*/data/www/*/ 2>/dev/null
                         echo " VestaCP/HestiaCP"
                         ls -d ${MNTCHK}usr/local/vesta 2>/dev/null
                         ls -d ${MNTCHK}home/*/web/*/ 2>/dev/null
