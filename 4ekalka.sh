@@ -101,6 +101,7 @@ fi
                         ls -d ${MNTCHK}home/*/domains/*/ 2>/dev/null
                         echo " FastPanel"
                         echo -n "   Панель: " ; ls -d ${MNTCHK}usr/local/fastpanel* 2>/dev/null
+                        echo ""
                         echo " aaPanel"
                         echo -n "   Панель: " ; ls -d ${MNTCHK}www/server/panel 2>/dev/null
                         echo ""
