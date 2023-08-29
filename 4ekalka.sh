@@ -81,20 +81,30 @@ fi
                         echo ""
                         echo "Чекаем наличие панели и хостов в директории"
                         echo " ISPmanager 5+"
-                        ls -d ${MNTCHK}usr/local/mgr5 2>/dev/null
+                        echo -n "   Панель: " ; ls -d ${MNTCHK}usr/local/mgr5 2>/dev/null
+			echo ""
+			echo "   Хосты:"
                         ls -d ${MNTCHK}var/www/*/data/www/*/ 2>/dev/null
                         echo " VestaCP/HestiaCP"
-                        ls -d ${MNTCHK}usr/local/vesta 2>/dev/null
+                        echo -n "   Панель: " ; ls -d ${MNTCHK}usr/local/vesta 2>/dev/null
+                        echo ""
+                        echo "   Хосты:"
                         ls -d ${MNTCHK}home/*/web/*/ 2>/dev/null
-                        ls -d ${MNTCHK}usr/local/hestia 2>/dev/null
+                        echo -n "   Панель: " ; ls -d ${MNTCHK}usr/local/hestia 2>/dev/null
+                        echo ""
+                        echo "   Хосты:"
                         ls -d ${MNTCHK}home/*/web/*/ 2>/dev/null
                         echo " DirectAdmin"
-                        ls -d ${MNTCHK}usr/local/directadmin 2>/dev/null
+                        echo -n "   Панель: " ; ls -d ${MNTCHK}usr/local/directadmin 2>/dev/null
+                        echo ""
+                        echo "   Хосты:"
                         ls -d ${MNTCHK}home/*/domains/*/ 2>/dev/null
                         echo " FastPanel"
-                        ls -d ${MNTCHK}usr/local/fastpanel* 2>/dev/null
+                        echo -n "   Панель: " ; ls -d ${MNTCHK}usr/local/fastpanel* 2>/dev/null
                         echo " aaPanel"
-                        ls -d ${MNTCHK}www/server/panel 2>/dev/null
+                        echo -n "   Панель: " ; ls -d ${MNTCHK}www/server/panel 2>/dev/null
+                        echo ""
+                        echo "   Хосты:"
                         ls -d ${MNTCHK}www/wwwroot/*/ 2>/dev/null
                         echo ""
                         echo ""
@@ -114,7 +124,7 @@ fi
                         echo "| curl -F 'paste=<-' https://ispaste.prounix.pw/"
                         echo ""
                         echo ""
-                        echo "АХТУНГ! Если какие-то ошибки на этом шаге, срочно обращаться в телегу @Sara_Sengi"
+                        echo "SUPPORT! Если какие-то ошибки, сообщать в телегу @Sara_Sengi"
                         rm -f /root/4ekalka.sh
                 else
                 echo "VPS не запущен. Возможно уже cancelled или suspended."
