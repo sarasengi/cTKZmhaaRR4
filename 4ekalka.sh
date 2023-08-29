@@ -1,4 +1,10 @@
 #!/bin/bash
+
+if [ $# -eq 0 ]; then
+  echo "А какой VPS-то? Укажи как аргумент IP или ID."
+  exit
+fi
+
 VPS=$1
 VPSID=$(echo ${VPS} | sed 's/\./\-/g')
 VPSMAP=$(echo ${VPSID} | sed 's/-/--/g')
@@ -8,7 +14,12 @@ VPSLVM=$(grep "${VPSID}" /var/vsc/vps_files/${VPSID}/config.cfg | grep '.fs' | a
 DISKPART=$(ls -la /dev/mapper/ | grep "${VPSMAP}" | grep '.fs1 ->' | wc -l)
 liveornot=$(virsh list | grep -w ${VPSID}| wc -l)
 
-if [ "${DISKPART}" == 0 ]; then
+mapcheck=$(dmsetup ls | grep -E 'fs1|p1' | wc -l)
+if [[ $mapcheck > 0 ]]; then
+   echo "ALAAAARM! Есть неубранные мапы:";
+   echo "$(dmsetup ls | grep -E 'fs1|p1')";
+   exit;
+fi
 
         echo "Итак, собираемся чекать ${vps}. Сначала проверим, запущен ли он.>>>>"
                 if [ ${liveornot} = 1 ]; then
@@ -65,29 +76,28 @@ if [ "${DISKPART}" == 0 ]; then
                         echo ""
                         echo ""
                         echo "чекаем возможные домены (возможно, надо будет ещё вручную проверить)"
-                        grep -R -E 'server_name|namevhost' ${MNTCHK}etc/httpd/* ${MNTCHK}etc/nginx/*
+                        grep -R -E 'server_name|namevhost' ${MNTCHK}etc/httpd/* ${MNTCHK}etc/nginx/* ${MNTCHK}home/*/conf/web/* 2>/dev/null
+                        echo ""
+			echo ""
+                        echo "Чекаем наличие панели и хостов в директории"
+                        echo " ISPmanager 5+"
+                        ls -d ${MNTCHK}usr/local/mgr5 2>/dev/null
+			ls -d ${MNTCHK}var/www/*/data/www/*/ 2>/dev/null
+                        echo " VestaCP/HestiaCP"
+                        ls -d ${MNTCHK}usr/local/vesta 2>/dev/null
+                        ls -d ${MNTCHK}home/*/web/*/ 2>/dev/null
+                        ls -d ${MNTCHK}usr/local/hestia 2>/dev/null
+                        ls -d ${MNTCHK}home/*/web/*/ 2>/dev/null
+                        echo " DirectAdmin"
+                        ls -d ${MNTCHK}usr/local/directadmin 2>/dev/null
+                        ls -d ${MNTCHK}home/*/domains/*/ 2>/dev/null
+                        echo " FastPanel"
+                        ls -d ${MNTCHK}usr/local/fastpanel* 2>/dev/null
+                        echo " aaPanel"
+                        ls -d ${MNTCHK}www/server/panel 2>/dev/null
+                        ls -d ${MNTCHK}www/wwwroot/*/ 2>/dev/null
                         echo ""
                         echo ""
-                        echo "Проверяем, нет ли созданных сайтов в ISPmanager"
-                        ls -d ${MNTCHK}var/www/*/data/www/*/
-                        echo "Проверяем, нет ли созданных сайтов в VestaCP/HestiaCP"
-                        ls -d ${MNTCHK}home/*/web/*/
-                        echo "Проверяем, нет ли созданных сайтов в DirectAdmin"
-                        ls -d ${MNTCHK}home/*/domains/*/
-                        echo ""
-                        echo ""
-                        echo "Чекаем наличие панели"
-                        echo "ISPmanager 5+"
-                        ls -d ${MNTCHK}usr/local/mgr5
-                        echo "VestaCP/HestiaCP"
-                        ls -d ${MNTCHK}usr/local/vesta
-                        ls -d ${MNTCHK}usr/local/hestia
-                        echo "DirectAdmin"
-                        ls -d ${MNTCHK}usr/local/directadmin
-                        echo "FastPanel"
-                        ls -d ${MNTCHK}usr/local/fastpanel*
-                        echo "aaPanel"
-                        ls -d ${MNTCHK}www/server/panel
                         echo ""
                         echo ""
                         echo "Отмонтируем и удаляем снапшот (ВНИМАНИЕ! Обращаем внимание, успешно ли на этом шаге всё прошло!)"
@@ -95,7 +105,7 @@ if [ "${DISKPART}" == 0 ]; then
                         echo ""
                         echo ""
                         echo "Если надо смонтировать для проверки вручную, вот копипаста:"
-                        echo "lvcreate -L 5G -s -n snap_check48.fs {VPSLVM} && kpartx -av /dev/vg00/snap_check48.fs && mount /dev/mapper/vg00-snap_check48.fs1 /mnt/check48/"
+                        echo "lvcreate -L 5G -s -n snap_check48.fs ${VPSLVM} && kpartx -av /dev/vg00/snap_check48.fs && mount /dev/mapper/vg00-snap_check48.fs1 /mnt/check48/"
                         echo "И копипаста для уборки за собой (ОБЯЗАТЕЛЬНО при проверки вручную!)"
                         echo "umount /mnt/check48/ && kpartx -dv /dev/vg00/snap_check48.fs && lvremove -fy /dev/vg00/snap_check48.fs"
                         echo ""
@@ -109,10 +119,4 @@ if [ "${DISKPART}" == 0 ]; then
                 else
                 echo "VPS не запущен. Возможно уже cancelled или suspended."
                 fi
-else
-maps=$(ls -la /dev/mapper/* | grep '.fs1')
-echo "ALARM!!!! На ноде есть не свёрнутые мапы! Сначала прибери или выясни, кто ещё на ноде что-то делает."
-echo "${maps}"
-
-fi
 
