@@ -38,7 +38,7 @@ fi
                         echo ""
                         echo "####смотрим входы по ssh и выводим новые"
                         cp ssh_2daysafter ssh
-                        grep -h Accept ${MNTCHK}var/log/{secure,auth.log}* > ssh_2daysafter
+                        grep -h Accept ${MNTCHK}var/log/{secure,auth.log}* > ssh_2daysafter 2>/dev/null
                         cat ssh | grep -v -f ssh_2daysafter > sshlogbuff
                         cat ssh_2daysafter | grep -v -f sshlogbuff > last_ssh_log
                         rm -f sshlogbuff
