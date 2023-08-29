@@ -86,7 +86,7 @@ fi
 			echo "   Хосты:"
                         ls -d ${MNTCHK}var/www/*/data/www/*/ 2>/dev/null
                         echo " VestaCP/HestiaCP"
-                        echo -n "   Панель: " ; ls -d ${MNTCHK}usr/local/vesta 2>/dev/null ; ls -d ${MNTCHK}usr/local/hestia 2>/dev/null
+                        echo -n "   Панель: " ; ls -d ${MNTCHK}usr/local/{vesta,hestia} 2>/dev/null
                         echo ""
                         echo "   Хосты:"
                         ls -d ${MNTCHK}home/*/web/*/ 2>/dev/null
