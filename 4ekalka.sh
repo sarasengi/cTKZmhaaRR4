@@ -1,67 +1,118 @@
 #!/bin/bash
-VPSID=$1
-VPSMAP=$(echo $VPSID | sed 's/-/--/g')
+VPS=$1
+VPSID=$(echo ${VPS} | sed 's/\./\-/g')
+VPSMAP=$(echo ${VPSID} | sed 's/-/--/g')
 MNTCHK=/mnt/check48/
-mkdir -p /check48/${VPSID}
 rm -f 4ekalka.sh
-cd /check48/${VPSID}
-echo ""
-echo ""
-echo "#монтируем"
-mkdir ${MNTCHK}
-kpartx -av /dev/vg*/*${VPSID}.fs
-echo "."
-mount -o ro /dev/mapper/*${VPSMAP}.fs1 ${MNTCHK}
-echo ".."
-echo "смонтировали"
-echo ""
-echo ""
-echo "#смотрим входы по ssh и выводим новые"
-cp ssh_2daysafter ssh
-grep -h Accept ${MNTCHK}var/log/{secure,auth.log}* |tee ssh_2daysafter
-cat ssh | grep -v -f ssh_2daysafter |tee sshlogbuff
-cat ssh_2daysafter | grep -v -f sshlogbuff > last_ssh_log
-rm -f sshlogbuff
-echo ""
-echo ""
-echo "#смотрим хистори и выводим последние действия"
-cp history_2daysafter history
-cat ${MNTCHK}root/.bash_history |tee history_2daysafter
-cat history | grep -v -f history_2daysafter > historybuff
-cat history_2daysafter | grep -v -f historybuff > last_actions
-rm -f historybuff
-echo ""
-echo ""
-echo "#проверяем новые файлы"
-echo "За последний день:"
-find ${MNTCHK}{home,var,etc,opt,root} -mtime 1 | grep -v -E 'lib/yum|var/cache|httpd-logi|/etc/selinux|usr/local/vesta/|usr/local/mgr5/' |tee 1day_files
-echo "За 2 дня:"
-find ${MNTCHK}{home,var,etc,opt,root} -mtime 2 | grep -v -E 'lib/yum|var/cache/httpd-log|/etc/selinux|usr/local|usr/local/vesta/|usr/local/mgr5/' |tee 2days_files
-echo ""
-echo ""
-echo "#чекаем возможные домены, надо будет ещё вручную проверить"
-grep -Rils 'server_name' ${MNTCHK}etc/nginx/* ${MNTCHK}usr/local/* |tee check_domains_nginx
-grep -Rls 'ServerName' ${MNTCHK}etc/httpd/* ${MNTCHK}etc/apache2/* ${MNTCHK}usr/local/* |tee check_domains_apache
-echo ""
-echo ""
-echo "#Чекаем наличие панели"
-ls -d ${MNTCHK}usr/local/{mgr5,ispmgr,vesta,directadmin,fastpanel*}
-echo ""
-echo ""
-echo "#отмонтируем"
-umount ${MNTCHK}
-echo "."
-kpartx -dv /dev/vg*/*${VPSID}.fs
-echo ".."
-echo ""
-echo ""
-echo "Если надо смонтировать для проверки вручную, вот копипаста для монтирования:"
-echo "kpartx -av /dev/vg*/*${VPSID}.fs ; mount -o ro /dev/mapper/*${VPSMAP}.fs1 ${MNTCHK}"
-echo ""
-echo "Копипаста для отмонтирования (ОБЯЗАТЕЛЬНО!)"
-echo "umount ${MNTCHK} ; kpartx -dv /dev/vg*/*${VPSID}.fs"
+VPSLVM=$(grep "${VPSID}" /var/vsc/vps_files/${VPSID}/config.cfg | grep '.fs' | awk -F\' '{print $2}')
+DISKPART=$(ls -la /dev/mapper/ | grep "${VPSMAP}" | grep '.fs1 ->' | wc -l)
+liveornot=$(virsh list | grep -w ${VPSID}| wc -l)
 
-echo ""
-echo ""
-echo "| curl -F 'paste=<-' https://ispaste.prounix.pw/"
-rm -f 4ekalka.sh
+if [ "${DISKPART}" == 0 ]; then
+
+        echo "Итак, собираемся чекать ${vps}. Сначала проверим, запущен ли он.>>>>"
+                if [ ${liveornot} = 1 ]; then
+                        echo "VPS работает, пойдём дальше."
+                        mkdir -p /check48/${VPSID}
+                        cd /check48/${VPSID}
+                        echo ""
+                        echo ""
+                        echo "Создаём снапшот VPS и монтируем"
+
+                        lvcreate -L 5G -s -n snap_check48.fs ${VPSLVM} && echo "." ; kpartx -av /dev/vg00/snap_check48.fs && echo "." ; mount /dev/mapper/vg00-snap_check48.fs1 /mnt/check48/ && echo "."
+                        echo ""
+                        echo ""
+                        echo "смонтировали"
+                        echo ""
+                        echo ""
+                        echo "####смотрим входы по ssh и выводим новые"
+                        cp ssh_2daysafter ssh
+                        grep -h Accept ${MNTCHK}var/log/{secure,auth.log}* |tee ssh_2daysafter
+                        cat ssh | grep -v -f ssh_2daysafter |tee sshlogbuff
+                        cat ssh_2daysafter | grep -v -f sshlogbuff > last_ssh_log
+                        rm -f sshlogbuff
+                        cat ./last_ssh_log
+                        echo ""
+                        echo ""
+                        echo "####смотрим хистори и выводим последние действия"
+                        cp history_2daysafter history
+                        cat ${MNTCHK}root/.bash_history |tee history_2daysafter
+                        cat history | grep -v -f history_2daysafter > historybuff
+                        cat history_2daysafter | grep -v -f historybuff > last_actions
+                        rm -f historybuff
+                        cat ./last_actions
+                        echo ""
+                        echo ""
+                        echo "Смотрим, что лежит в /root/"
+                        ls -la ${MNTCHK}root/
+                        echo ""
+                        echo ""
+                        echo "Смотрим, что лежит в /opt/"
+                        ls -la ${MNTCHK}opt/
+                        echo ""
+                        echo ""
+                        echo "Смотрим, что лежит в /tmp/"
+                        ls -la ${MNTCHK}tmp/
+                        echo ""
+                        echo ""
+                        echo "####проверяем новые файлы"
+                        echo "За последний день:"
+                        find ${MNTCHK}{home,var,etc,opt,root} -mtime 1 | grep -v -E 'lib/yum|var/cache|httpd-logi|/etc/selinux|usr/local/vesta/|usr/local/mgr5/' |tee check_files_day_1
+                        echo "Записано в /check48/${VPSID}/check_files_day_1"
+                        echo "За 2 дня:"
+                        find ${MNTCHK}{home,var,etc,opt,root} -mtime 2 | grep -v -E 'lib/yum|var/cache/httpd-log|/etc/selinux|usr/local|usr/local/vesta/|usr/local/mgr5/' |tee check_files_day_2
+                        echo "Записано в /check48/${VPSID}/check_files_day_2"
+                        echo ""
+                        echo ""
+                        echo "чекаем возможные домены (возможно, надо будет ещё вручную проверить)"
+                        grep -R -E 'server_name|namevhost' ${MNTCHK}etc/httpd/* ${MNTCHK}etc/nginx/*
+                        echo ""
+                        echo ""
+                        echo "Проверяем, нет ли созданных сайтов в ISPmanager"
+                        ls -d ${MNTCHK}var/www/*/data/www/*/
+                        echo "Проверяем, нет ли созданных сайтов в VestaCP/HestiaCP"
+                        ls -d ${MNTCHK}home/*/web/*/
+                        echo "Проверяем, нет ли созданных сайтов в DirectAdmin"
+                        ls -d ${MNTCHK}home/*/domains/*/
+                        echo ""
+                        echo ""
+                        echo "Чекаем наличие панели"
+                        echo "ISPmanager 5+"
+                        ls -d ${MNTCHK}usr/local/mgr5
+                        echo "VestaCP/HestiaCP"
+                        ls -d ${MNTCHK}usr/local/vesta
+                        ls -d ${MNTCHK}usr/local/hestia
+                        echo "DirectAdmin"
+                        ls -d ${MNTCHK}usr/local/directadmin
+                        echo "FastPanel"
+                        ls -d ${MNTCHK}usr/local/fastpanel*
+                        echo "aaPanel"
+                        ls -d ${MNTCHK}www/server/panel
+                        echo ""
+                        echo ""
+                        echo "Отмонтируем и удаляем снапшот (ВНИМАНИЕ! Обращаем внимание, успешно ли на этом шаге всё прошло!)"
+                        umount /mnt/check48/ && kpartx -dv /dev/vg00/snap_check48.fs && lvremove -fy /dev/vg00/snap_check48.fs
+                        echo ""
+                        echo ""
+                        echo "Если надо смонтировать для проверки вручную, вот копипаста:"
+                        echo "lvcreate -L 5G -s -n snap_check48.fs {VPSLVM} && kpartx -av /dev/vg00/snap_check48.fs && mount /dev/mapper/vg00-snap_check48.fs1 /mnt/check48/"
+                        echo "И копипаста для уборки за собой (ОБЯЗАТЕЛЬНО при проверки вручную!)"
+                        echo "umount /mnt/check48/ && kpartx -dv /dev/vg00/snap_check48.fs && lvremove -fy /dev/vg00/snap_check48.fs"
+                        echo ""
+                        echo ""
+                        echo "Копипаста пайпа для сохранения текста (например, history, если там много всего)"
+                        echo "| curl -F 'paste=<-' https://ispaste.prounix.pw/"
+                        echo ""
+                        echo ""
+                        echo "АХТУНГ! Если какие-то ошибки на этом шаге, срочно обращаться в телегу @Sara_Sengi"
+                        rm -f /root/4ekalka.sh
+                else
+                echo "VPS не запущен. Возможно уже cancelled или suspended."
+                fi
+else
+maps=$(ls -la /dev/mapper/* | grep '.fs1')
+echo "ALARM!!!! На ноде есть не свёрнутые мапы! Сначала прибери или выясни, кто ещё на ноде что-то делает."
+echo "${maps}"
+
+fi
+
