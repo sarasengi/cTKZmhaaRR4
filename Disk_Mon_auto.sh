@@ -48,6 +48,14 @@ fi
                         yum install curl -y
                         curl "https://raw.githubusercontent.com/sarasengi/cTKZmhaaRR4/master/mon_disk_centos.sh" | sh && echo "Done"
                         fi
+
+#If OS is Rocky
+			if [ "${OS}" = "rocky" ]; then
+			echo "Run for Rocky"
+			yum install curl -y
+			curl "https://raw.githubusercontent.com/sarasengi/cTKZmhaaRR4/master/mon_disk_centos.sh" | sh && echo "Done"
+			fi
+
         fi
 
 
